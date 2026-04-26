@@ -441,9 +441,9 @@ const TABS = {
     nb: 11,
     rows: 2,
     prefilled: [
-      { inter: "2x40AC", typeA: false,
+      { inter: "2x63AC", typeA: false,
         calibres: [10,16,16,20,20,10], usages: ["ECL","PCT","PCT","FOUR","LAVE VAISSELLE","V.R."] },
-      { inter: "2x40A", typeA: true,
+      { inter: "2x63A", typeA: true,
         calibres: [32,20,10,10,10,16], usages: ["PLAQUE CUISSON","LAVE LINGE","ECL","CH","S/S","PCT GTL"] },
     ]
   },
@@ -452,9 +452,9 @@ const TABS = {
     nb: 11,
     rows: 2,
     prefilled: [
-      { inter: "2x40AC", typeA: false,
+      { inter: "2x63AC", typeA: false,
         calibres: [10,16,16,20,16,20,16,10], usages: ["ECL","PCT","PCT","FOUR","BALLON THERMO.","LAVE VAISSELLE","CLIM","S/S"] },
-      { inter: "2x40A", typeA: true,
+      { inter: "2x63A", typeA: true,
         calibres: [32,20,10,16,10,10,16], usages: ["PLAQUE CUISSON","LAVE LINGE","ECL","PCT","VR","CH CHAMBRES","PCT GTL"] },
     ]
   },
@@ -463,11 +463,11 @@ const TABS = {
     nb: 11,
     rows: 3,
     prefilled: [
-      { inter: "2x40AC", typeA: false,
+      { inter: "2x63AC", typeA: false,
         calibres: [10,10,16,16,20,10,10], usages: ["ECL","ECL","PCT","PCT","FOUR","CH","S/S"] },
-      { inter: "2x40AC", typeA: false,
+      { inter: "2x63AC", typeA: false,
         calibres: [10,16,16,20,10,10,10], usages: ["ECL","PCT","PCT","LAVE VAISSELLE","CH","CH","V.R."] },
-      { inter: "2x40A", typeA: true,
+      { inter: "2x63A", typeA: true,
         calibres: [32,20,10,16,10], usages: ["PLAQUE CUISSON","LAVE LINGE","ECL","PCT","CH"] },
     ]
   },
@@ -476,13 +476,13 @@ const TABS = {
     nb: 11,
     rows: 4,
     prefilled: [
-      { inter: "2x40AC", typeA: false,
+      { inter: "2x63AC", typeA: false,
         calibres: [10,16,16,20,10], usages: ["ECL","PCT","PCT","FOUR","CH"] },
-      { inter: "2x40AC", typeA: false,
+      { inter: "2x63AC", typeA: false,
         calibres: [10,16,16,20], usages: ["ECL","PCT","PCT","LAVE VAISSELLE"] },
-      { inter: "2x40AC", typeA: false,
+      { inter: "2x63AC", typeA: false,
         calibres: [10,16,16,20], usages: ["ECL","PCT","PCT","CLIM"] },
-      { inter: "2x40A", typeA: true,
+      { inter: "2x63A", typeA: true,
         calibres: [32,20,20,16], usages: ["PLAQUE CUISSON","LAVE LINGE","ECL","PCT"] },
     ]
   },
@@ -566,6 +566,14 @@ function buildTab(tabId) {
       if (ch === defaultInter) opt.selected = true;
       sel.appendChild(opt);
     });
+    if (!isFree) {
+      sel.disabled = true;
+      sel.style.opacity = '1';
+      sel.style.cursor = 'default';
+      sel.style.background = 'rgba(255,255,255,0.15)';
+      sel.style.border = '1px solid rgba(255,255,255,0.2)';
+      sel.style.pointerEvents = 'none';
+    }
     sel.addEventListener('change', () => updateInterColor(tabId, r, sel.value));
     hdr.appendChild(sel);
     block.appendChild(hdr);
