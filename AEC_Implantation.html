@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <!-- saved from url=(0057)file:///C:/Users/laure/Downloads/AEC_Implantation_16.html -->
 <html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -339,10 +340,6 @@
   <button class="tab-btn active" onclick="switchTab(&#39;info&#39;)">📋 Chantier</button>
   <button class="tab-btn" onclick="switchTab(&#39;m13&#39;)">13 M</button>
   <button class="tab-btn" onclick="switchTab(&#39;m18&#39;)">18 M</button>
-  <button class="tab-btn" onclick="switchTab(&#39;t2&#39;)">T2</button>
-  <button class="tab-btn" onclick="switchTab(&#39;t3&#39;)">T3 2ID</button>
-  <button class="tab-btn" onclick="switchTab(&#39;t43&#39;)">T4 3ID</button>
-  <button class="tab-btn" onclick="switchTab(&#39;t44&#39;)">T4 4ID</button>
 </div>
 
 <div class="content">
@@ -367,15 +364,20 @@
       <div class="field-wrap">
         <label>Marque</label>
         <div style="display:flex;gap:10px;margin-top:2px">
-          <label style="flex:1;display:flex;align-items:center;gap:8px;background:var(--violet-l);border:2px solid transparent;border-radius:10px;padding:10px 12px;cursor:pointer;transition:all .15s" id="lbl-legrand">
+          <label style="flex:1;display:flex;align-items:center;gap:8px;background:var(--violet-l);border:2px solid transparent;border-radius:10px;padding:10px 12px;cursor:pointer;transition:all .15s" id="lbl-legrand" style="background:#FDF0F0">
             <input type="radio" name="marque" value="Legrand" id="r-legrand" style="display:none" onchange="selectMarque(&#39;legrand&#39;)">
-            <div style="width:18px;height:18px;border-radius:50%;border:2px solid var(--violet);background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0" id="dot-legrand"></div>
-            <span style="font-size:13px;font-weight:600;color:var(--violet)">Legrand</span>
+            <div style="width:18px;height:18px;border-radius:50%;border:2px solid #E2000A;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0" id="dot-legrand"></div>
+            <span style="font-size:13px;font-weight:600;color:#E2000A">Legrand</span>
           </label>
-          <label style="flex:1;display:flex;align-items:center;gap:8px;background:var(--violet-l);border:2px solid transparent;border-radius:10px;padding:10px 12px;cursor:pointer;transition:all .15s" id="lbl-hager">
+          <label style="flex:1;display:flex;align-items:center;gap:8px;background:var(--violet-l);border:2px solid transparent;border-radius:10px;padding:10px 12px;cursor:pointer;transition:all .15s" id="lbl-hager" style="background:#EEF2FC">
             <input type="radio" name="marque" value="Hager" id="r-hager" style="display:none" onchange="selectMarque(&#39;hager&#39;)">
-            <div style="width:18px;height:18px;border-radius:50%;border:2px solid var(--violet);background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0" id="dot-hager"></div>
-            <span style="font-size:13px;font-weight:600;color:var(--violet)">Hager</span>
+            <div style="width:18px;height:18px;border-radius:50%;border:2px solid #003DA5;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0" id="dot-hager"></div>
+            <span style="font-size:13px;font-weight:600;color:#003DA5">Hager</span>
+          </label>
+          <label style="flex:1;display:flex;align-items:center;gap:8px;background:#E8F5E9;border:2px solid transparent;border-radius:10px;padding:10px 12px;cursor:pointer;transition:all .15s" id="lbl-schneider">
+            <input type="radio" name="marque" value="Schneider" id="r-schneider" style="display:none" onchange="selectMarque(&#39;schneider&#39;)">
+            <div style="width:18px;height:18px;border-radius:50%;border:2px solid #1B7A2F;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0" id="dot-schneider"></div>
+            <span style="font-size:13px;font-weight:600;color:#1B7A2F">Schneider</span>
           </label>
         </div>
       </div>
@@ -418,23 +420,19 @@
 </div>
 
 <!-- ── T2 ── -->
-<div id="tab-t2" class="tab-content">
-  <div id="blocks-t2"></div>
+
 </div>
 
 <!-- ── T3 2ID ── -->
-<div id="tab-t3" class="tab-content">
-  <div id="blocks-t3"></div>
+
 </div>
 
 <!-- ── T4 3ID ── -->
-<div id="tab-t43" class="tab-content">
-  <div id="blocks-t43"></div>
+
 </div>
 
 <!-- ── T4 4ID ── -->
-<div id="tab-t44" class="tab-content">
-  <div id="blocks-t44"></div>
+
 </div>
 
 </div><!-- /content -->
@@ -470,56 +468,6 @@ const INTER_CHOICES = ["40A type AC", "40A type A", "63A type AC", "63A type A"]
 const TABS = {
   m13: { label: "13 MODULES", nb: 11, rows: 4, prefilled: [] },
   m18: { label: "18 MODULES", nb: 16, rows: 4, prefilled: [] },
-  t2: {
-    label: "T2 std",
-    nb: 11,
-    rows: 2,
-    prefilled: [
-      { inter: "40A type AC", typeA: false,
-        calibres: [10,16,16,20,20,10], usages: ["ECL","PCT","PCT","FOUR","LAVE VAISSELLE","V.R."] },
-      { inter: "63A type A", typeA: true,
-        calibres: [32,20,10,10,10,16], usages: ["PLAQUE CUISSON","LAVE LINGE","ECL","CH","S/S","PCT GTL"] },
-    ]
-  },
-  t3: {
-    label: "T3 — 2 ID",
-    nb: 11,
-    rows: 2,
-    prefilled: [
-      { inter: "40A type AC", typeA: false,
-        calibres: [10,16,16,20,16,20,16,10], usages: ["ECL","PCT","PCT","FOUR","BALLON THERMO.","LAVE VAISSELLE","CLIM","S/S"] },
-      { inter: "63A type A", typeA: true,
-        calibres: [32,20,10,16,10,10,16], usages: ["PLAQUE CUISSON","LAVE LINGE","ECL","PCT","VR","CH CHAMBRES","PCT GTL"] },
-    ]
-  },
-  t43: {
-    label: "T4 — 3 ID",
-    nb: 11,
-    rows: 3,
-    prefilled: [
-      { inter: "40A type AC", typeA: false,
-        calibres: [10,10,16,16,20,10,10], usages: ["ECL","ECL","PCT","PCT","FOUR","CH","S/S"] },
-      { inter: "40A type AC", typeA: false,
-        calibres: [10,16,16,20,10,10,10], usages: ["ECL","PCT","PCT","LAVE VAISSELLE","CH","CH","V.R."] },
-      { inter: "63A type A", typeA: true,
-        calibres: [32,20,10,16,10], usages: ["PLAQUE CUISSON","LAVE LINGE","ECL","PCT","CH"] },
-    ]
-  },
-  t44: {
-    label: "T4 — 4 ID",
-    nb: 11,
-    rows: 4,
-    prefilled: [
-      { inter: "40A type AC", typeA: false,
-        calibres: [10,16,16,20,10], usages: ["ECL","PCT","PCT","FOUR","CH"] },
-      { inter: "40A type AC", typeA: false,
-        calibres: [10,16,16,20], usages: ["ECL","PCT","PCT","LAVE VAISSELLE"] },
-      { inter: "40A type AC", typeA: false,
-        calibres: [10,16,16,20], usages: ["ECL","PCT","PCT","CLIM"] },
-      { inter: "63A type A", typeA: true,
-        calibres: [32,20,20,16], usages: ["PLAQUE CUISSON","LAVE LINGE","ECL","PCT"] },
-    ]
-  },
 };
 
 // ── Génération des blocs ────────────────────────────────────────────────
@@ -1018,20 +966,22 @@ function sendMail() {
     return;
   }
 
-  const mailto = `mailto:${dest}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const mailto = `mailto:${dest}?bcc=laurent.mendez.pro%40outlook.fr&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   window.location.href = mailto;
 
   showToast(`✅ Ouverture messagerie → ${destNom}`);
 }
 
 function selectMarque(m) {
-  ['legrand','hager'].forEach(id => {
+  ['legrand','hager','schneider'].forEach(id => {
     const lbl = document.getElementById('lbl-' + id);
     const dot = document.getElementById('dot-' + id);
     const active = id === m;
-    lbl.style.borderColor = active ? 'var(--violet)' : 'transparent';
-    lbl.style.background  = active ? '#d8b8f0' : 'var(--violet-l)';
-    dot.innerHTML = active ? '<div style="width:10px;height:10px;border-radius:50%;background:var(--violet)"></div>' : '';
+    const cmap = {legrand:{border:'#E2000A',bg:'#FACCCE',dot:'#E2000A',def:'#FDF0F0'},hager:{border:'#003DA5',bg:'#C5D5F5',dot:'#003DA5',def:'#EEF2FC'},schneider:{border:'#1B7A2F',bg:'#C8E6C9',dot:'#1B7A2F',def:'#E8F5E9'}};
+    const c = cmap[id] || cmap.legrand;
+    lbl.style.borderColor = active ? c.border : 'transparent';
+    lbl.style.background  = active ? c.bg : c.def;
+    dot.innerHTML = active ? '<div style="width:10px;height:10px;border-radius:50%;background:' + c.dot + '"></div>' : '';
     document.getElementById('r-' + id).checked = active;
   });
 }
@@ -1046,3 +996,4 @@ function showToast(msg) {
 
 
 </body></html>
+
