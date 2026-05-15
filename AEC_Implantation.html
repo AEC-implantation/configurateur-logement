@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <!-- saved from url=(0057)file:///C:/Users/laure/Downloads/AEC_Implantation_16.html -->
 <html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -295,7 +296,65 @@
   }
   .send-btn:active { transform: scale(0.97); }
 
-  /* ── Toast ── */
+  /* ── Sauvegarde ── */
+.save-bar {
+  display: flex; gap: 8px; padding: 10px 14px 6px;
+  background: var(--white); border-bottom: 1px solid var(--border);
+}
+.save-btn {
+  flex: 1; padding: 9px 8px; border-radius: 10px;
+  border: 2px solid var(--border);
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s; text-align: center;
+  background: var(--white); color: var(--violet);
+}
+.save-btn:active { transform: scale(0.97); }
+.save-btn.primary { background: var(--violet); color: #fff; border-color: var(--violet); }
+
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 500;
+  align-items: flex-end; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: #fff; border-radius: 20px 20px 0 0;
+  width: 100%; max-height: 80vh; overflow-y: auto;
+  padding: 20px 16px 30px;
+}
+.modal-title {
+  font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700;
+  color: var(--violet); margin-bottom: 14px;
+}
+.modal-input {
+  width: 100%; border: 2px solid var(--border); border-radius: 10px;
+  padding: 10px 12px; font-size: 14px; font-family: 'DM Sans', sans-serif;
+  margin-bottom: 10px; outline: none;
+}
+.modal-input:focus { border-color: var(--violet); }
+.modal-btn {
+  width: 100%; padding: 13px; border-radius: 10px; border: none;
+  background: var(--violet); color: #fff;
+  font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+  cursor: pointer; margin-bottom: 8px;
+}
+.modal-btn.secondary {
+  background: var(--white); color: var(--violet);
+  border: 2px solid var(--violet);
+}
+.project-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px; border: 1px solid var(--border);
+  border-radius: 10px; margin-bottom: 8px; cursor: pointer;
+  transition: all 0.15s;
+}
+.project-item:active { background: var(--violet-l); }
+.project-name { flex: 1; font-weight: 600; font-size: 14px; }
+.project-date { font-size: 11px; color: var(--grey); }
+.project-del { color: #CC0000; font-size: 18px; padding: 4px 8px; cursor: pointer; }
+.no-projects { text-align: center; color: var(--grey); padding: 20px; font-size: 13px; }
+
+/* ── Toast ── */
   .toast {
     position: fixed; bottom: 100px; left: 50%;
     transform: translateX(-50%) translateY(20px);
@@ -340,6 +399,30 @@
   <button class="tab-btn active" onclick="switchTab(&#39;info&#39;)">📋 Chantier</button>
   <button class="tab-btn" onclick="switchTab(&#39;m13&#39;)">13 M</button>
   <button class="tab-btn" onclick="switchTab(&#39;m18&#39;)">18 M</button>
+</div>
+
+<div class="save-bar">
+  <button class="save-btn primary" onclick="openSave()">💾 Sauvegarder</button>
+  <button class="save-btn" onclick="openLoad()">📂 Charger</button>
+</div>
+
+<!-- Modal Sauvegarder -->
+<div class="modal-overlay" id="modal-save" onclick="closeModal('modal-save')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-title">💾 Sauvegarder le projet</div>
+    <input class="modal-input" id="save-name" placeholder="Nom du projet (ex: Résidence Les Pins)" maxlength="60">
+    <button class="modal-btn" onclick="saveProject()">Sauvegarder</button>
+    <button class="modal-btn secondary" onclick="closeModal('modal-save')">Annuler</button>
+  </div>
+</div>
+
+<!-- Modal Charger -->
+<div class="modal-overlay" id="modal-load" onclick="closeModal('modal-load')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-title">📂 Charger un projet</div>
+    <div id="projects-list"></div>
+    <button class="modal-btn secondary" style="margin-top:8px" onclick="closeModal('modal-load')">Fermer</button>
+  </div>
 </div>
 
 <div class="content">
@@ -455,6 +538,176 @@
 <div class="toast" id="toast"></div>
 
 <script>
+// ── Sauvegarde localStorage ──────────────────────────────────────────
+const LS_KEY = 'aec_implantation_projects';
+
+function getAllProjects() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch { return {}; }
+}
+
+function saveProject() {
+  const name = document.getElementById('save-name').value.trim();
+  if (!name) { showToast('⚠ Donnez un nom au projet'); return; }
+  const data = collectFormData();
+  const projects = getAllProjects();
+  projects[name] = { data, date: new Date().toLocaleDateString('fr-FR') };
+  localStorage.setItem(LS_KEY, JSON.stringify(projects));
+  closeModal('modal-save');
+  document.getElementById('save-name').value = '';
+  showToast('✅ Projet "' + name + '" sauvegardé');
+}
+
+function openSave() {
+  // Pré-remplir avec le nom du chantier si renseigné
+  const nom = document.getElementById('f-chantier').value.trim();
+  if (nom) document.getElementById('save-name').value = nom;
+  document.getElementById('modal-save').classList.add('open');
+}
+
+function openLoad() {
+  const projects = getAllProjects();
+  const list = document.getElementById('projects-list');
+  const keys = Object.keys(projects);
+  if (!keys.length) {
+    list.innerHTML = '<div class="no-projects">Aucun projet sauvegardé</div>';
+  } else {
+    list.innerHTML = keys.map(name => `
+      <div class="project-item">
+        <div style="flex:1" onclick="loadProject('${name.replace(/'/g, "\'")}')">
+          <div class="project-name">${name}</div>
+          <div class="project-date">📅 ${projects[name].date}</div>
+        </div>
+        <div class="project-del" onclick="deleteProject('${name.replace(/'/g, "\'")}')">🗑</div>
+      </div>`).join('');
+  }
+  document.getElementById('modal-load').classList.add('open');
+}
+
+function loadProject(name) {
+  const projects = getAllProjects();
+  if (!projects[name]) return;
+  restoreFormData(projects[name].data);
+  closeModal('modal-load');
+  showToast('✅ Projet "' + name + '" chargé');
+}
+
+function deleteProject(name) {
+  if (!confirm('Supprimer le projet "' + name + '" ?')) return;
+  const projects = getAllProjects();
+  delete projects[name];
+  localStorage.setItem(LS_KEY, JSON.stringify(projects));
+  openLoad(); // Rafraîchir la liste
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function collectFormData() {
+  const data = {};
+  // Infos chantier
+  data.chantier = document.getElementById('f-chantier').value;
+  data.electro   = document.getElementById('f-electro').value;
+  data.tel        = document.getElementById('f-tel').value;
+  data.obs        = document.getElementById('f-obs').value;
+  data.coffrets   = document.getElementById('f-coffrets').value;
+  // Marque
+  const m = document.querySelector('input[name="marque"]:checked');
+  data.marque = m ? m.value : '';
+  // Rangées
+  data.rangees = null;
+  for (let i = 1; i <= 4; i++) {
+    const btn = document.getElementById('rng-' + i);
+    if (btn && btn.dataset.selected === 'true') { data.rangees = i; break; }
+  }
+  // Onglets inter diff
+  data.tabs = {};
+  ['m13','m18'].forEach(tabId => {
+    const container = document.getElementById('blocks-' + tabId);
+    if (!container || !container.dataset.built) return;
+    const cfg = TABS[tabId];
+    const tabData = { interDiff: [], departs: [] };
+    for (let r = 0; r < cfg.rows; r++) {
+      const sel = document.getElementById('inter-' + tabId + '-' + r);
+      tabData.interDiff.push(sel ? sel.value : '');
+      const rowDeparts = [];
+      for (let d = 0; d < cfg.nb; d++) {
+        const cal = document.getElementById('cal-' + tabId + '-' + r + '-' + d);
+        const usg = document.getElementById('usg-' + tabId + '-' + r + '-' + d);
+        rowDeparts.push({ cal: cal ? cal.value : '', usg: usg ? usg.value : '' });
+      }
+      tabData.departs.push(rowDeparts);
+    }
+    data.tabs[tabId] = tabData;
+  });
+  // Options cochées par onglet
+  data.options = {};
+  ['m13','m18'].forEach(tabId => {
+    const container = document.getElementById('blocks-' + tabId);
+    if (!container || !container.dataset.built) return;
+    data.options[tabId] = [];
+    container.querySelectorAll('.opt-item.checked .opt-label').forEach(l => {
+      data.options[tabId].push(l.textContent);
+    });
+  });
+  return data;
+}
+
+function restoreFormData(data) {
+  if (!data) return;
+  // Infos chantier
+  if (data.chantier !== undefined) document.getElementById('f-chantier').value = data.chantier;
+  if (data.electro  !== undefined) document.getElementById('f-electro').value  = data.electro;
+  if (data.tel      !== undefined) document.getElementById('f-tel').value       = data.tel;
+  if (data.obs      !== undefined) document.getElementById('f-obs').value       = data.obs;
+  if (data.coffrets !== undefined) document.getElementById('f-coffrets').value  = data.coffrets;
+  // Marque
+  if (data.marque) selectMarque(data.marque.toLowerCase());
+  // Rangées
+  if (data.rangees) selectRangees(data.rangees);
+  // Onglets — on switche sur l'onglet concerné pour forcer le build
+  if (data.tabs) {
+    Object.keys(data.tabs).forEach(tabId => {
+      // Forcer la construction de l'onglet
+      if (TABS[tabId]) buildTab(tabId);
+      const tabData = data.tabs[tabId];
+      const cfg = TABS[tabId];
+      if (!cfg) return;
+      setTimeout(() => {
+        for (let r = 0; r < cfg.rows; r++) {
+          const sel = document.getElementById('inter-' + tabId + '-' + r);
+          if (sel && tabData.interDiff[r]) {
+            sel.value = tabData.interDiff[r];
+            updateInterColor(tabId, r, tabData.interDiff[r]);
+            updatePCTMod(tabId);
+          }
+          if (tabData.departs[r]) {
+            tabData.departs[r].forEach((d, di) => {
+              const cal = document.getElementById('cal-' + tabId + '-' + r + '-' + di);
+              const usg = document.getElementById('usg-' + tabId + '-' + r + '-' + di);
+              if (cal && d.cal) { cal.value = d.cal; updateCalColor(cal); }
+              if (usg && d.usg) { usg.value = d.usg; }
+            });
+          }
+        }
+        // Options
+        if (data.options && data.options[tabId]) {
+          const container = document.getElementById('blocks-' + tabId);
+          if (container) {
+            container.querySelectorAll('.opt-item').forEach(item => {
+              const label = item.querySelector('.opt-label');
+              if (label && data.options[tabId].includes(label.textContent)) {
+                item.classList.add('checked');
+              }
+            });
+            updatePCTMod(tabId);
+          }
+        }
+      }, 100);
+    });
+  }
+}
+
 // ── Config ───────────────────────────────────────────────────────────────
 const DESTINATAIRES = [
   { nom: "Olivier",   email: "olivier.montalban@sasaec.fr" },
